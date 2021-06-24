@@ -1,0 +1,4 @@
+Python >= 3.8.6
+Django 1 >= 3.0
+A browser that supports the latest features of javascript
+fetch api
