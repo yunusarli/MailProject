@@ -32,19 +32,23 @@ function load_mailbox(mailbox) {
 
     // Show the mailbox name
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
-
+    // Getting email by mailbox parameteres (inbox,sent,archieve)
     fetch(`emails/${mailbox}`)
     .then(response => response.json())
     .then(email => {
       email.forEach(element=>{
+        // Create some html tags to embed content.
         const div = document.createElement('div');
         const link = document.createElement('a');
         const timeStamp = document.createElement('span');
-        const from = document.createElement('span')
+        const from = document.createElement('span');
+        
+        // Add class for styling.
         div.classList.add('goodview');
-
+        
+        // Editing the content of html tags and adding events.
         link.innerHTML = element.subject;
-        link.addEventListener('click',() => viewMail(element.id,mailbox,element.subject,element.sender))
+        link.addEventListener('click',() => viewMail(element.id,mailbox,element.subject,element.sender));
         link.classList.add('link-class');
         from.classList.add('right');
 
@@ -54,6 +58,7 @@ function load_mailbox(mailbox) {
         div.append(timeStamp);
         div.append(link);
         div.append(from);
+        // Check for if mail read or unread
         if (element.read){
           div.classList.add('read');
           link.classList.remove('link-class');
@@ -72,14 +77,14 @@ document.querySelector('#send_button').addEventListener('click',()=>{
     const recipients = document.querySelector('#compose-recipients').value;
     const subject = document.querySelector('#compose-subject').value;
     const body = document.querySelector('#compose-body').value;
-   
+   // Function for send mail
     newMail(recipients,subject,body);
   });
 
 
 
 function newMail(newrecipients,newsubject,newbody){
-  
+  // Send email with fetch api.
     fetch('/emails', {
       method: 'POST',
       body: JSON.stringify({
@@ -106,7 +111,7 @@ function viewMail(id,mailbox,subject,recipients){
     document.querySelector('#compose-view').style.display = 'none';
 
     document.querySelector('#email-detail').innerHTML = "";
-
+    // Get one email and show it.
     fetch(`/emails/${id}`)
     .then(response => response.json())
     .then(email => {
@@ -143,13 +148,14 @@ function viewMail(id,mailbox,subject,recipients){
       content.append(title);
       content.append(topic);
       content.append(sender);
-
+  
       if (mailbox != "sent"){
       const reply = document.createElement('button');
+        // Add a button for reply
       reply.innerHTML = "Reply"; 
       reply.style.position = "absolute";
       reply.style.left = 80+"%";
-
+      // Archieve or unarchieve an email. If a mail is archived, it is removed from the inbox and put in the archive box.
         if (!email.archived){
           const archived = document.createElement('button');
           archived.innerHTML = "Archive";
@@ -205,6 +211,8 @@ function ReplyMail(subject,recipients){
  
    // Fill the subject and recipients field and clear the other one.
    document.querySelector('#compose-recipients').value = `${recipients}`;
+  
+  // Checking if an email is already a reply email
    let sbjct = "";
    for (let i=0;i<2;i++){
      sbjct += String(subject[i]);
